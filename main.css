@@ -66,17 +66,6 @@ h2:hover {
   opacity: 60%;
 }
 
-.game-board {
-  display: flex;
-  justify-content: center;
-  margin: auto;
-}
-
-.pieces-tray {
-  background-color: gray;
-  width: 100px;
-}
-
 header {
   padding: 0.5em;
   background-size: 800% 100%;
@@ -107,10 +96,63 @@ header {
 }
 
 .main-container {
-  margin-top: '20px';
   width: 100vw;
   height: 100%;
   padding: auto;
+}
+
+.header-bar {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+}
+
+#button {
+  cursor: pointer;
+  border: 0;
+  padding: 0.5rem;
+  margin-right: 8px;
+}
+
+#scale-name {
+  color: black;
+}
+
+#instructions {
+  font-weight: 100;
+}
+
+#play-bar {
+  height: 20px;
+}
+
+#play-bar.playing {
+  padding: 2px;
+  background-size: 800% 100%;
+  background-image: linear-gradient(
+    90deg,
+    hsl(281, 49%, 39%),
+    hsl(281, 30%, 39%),
+    hsl(129, 64%, 65%),
+    hsl(131, 77%, 76%)
+  );
+  color: #f7f7f7;
+  animation-name: play-bar;
+  animation-duration: 5s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes play-bar {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .piano {
@@ -137,15 +179,6 @@ header {
   flex: 50%;
   color: #f7f7f7;
   cursor: pointer;
-}
-
-#scale-name {
-  color: black;
-  /* position: absolute; */
-}
-
-#instructions {
-  font-weight: 200;
 }
 
 div.key:hover {
