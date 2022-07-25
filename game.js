@@ -68,72 +68,67 @@ function createRandomVoice(synth) {
   synth.modulation.release = random(1, 300) / 100
 }
 
-function startNoise() {
-  document.querySelectorAll('.key').forEach((key, i) => {
-    const height = key.clientHeight
-    const width = key.clientWidth
-    const synth = new Tone.FMSynth({ volume: -6 - i }).toDestination()
-    createRandomVoice(synth)
-    const panner = new Tone.Panner(0).toDestination()
-    const crusher = new Tone.BitCrusher(4).toDestination()
-    const reverb = new Tone.Reverb(i + 2).toDestination()
-    synth.connect(crusher)
-    synth.connect(panner)
-    synth.connect(reverb)
-    tones.push(synth)
+document.querySelectorAll('.key').forEach((key, i) => {
+  const height = key.clientHeight
+  const width = key.clientWidth
+  const synth = new Tone.FMSynth({ volume: -6 - i }).toDestination()
+  createRandomVoice(synth)
+  const panner = new Tone.Panner(0).toDestination()
+  const crusher = new Tone.BitCrusher(4).toDestination()
+  const reverb = new Tone.Reverb(i + 2).toDestination()
+  synth.connect(crusher)
+  synth.connect(panner)
+  synth.connect(reverb)
+  tones.push(synth)
 
-    let note = ''
+  let note = ''
 
-    key.addEventListener('mouseover', () => {
+  key.addEventListener('mouseover', () => {
+    if (playing) {
       note =
         i === 0
           ? `${scaleKey}1`
           : `${notes[i % notes.length]}${Math.ceil(i / 3) + 1}`
       const now = Tone.now()
       synth.triggerAttack(note, now)
-    })
-    key.addEventListener('mouseout', () => {
-      const now = Tone.now()
-      i === 0 ? synth.triggerRelease(now + 3) : synth.triggerRelease(now)
-    })
-    key.addEventListener('mousemove', (e) => {
-      // if (i === 0) filter.frequency.value = Math.abs(16000 * (e.offsetY / height))
-      let bits = Math.round(15 * (e.offsetY / height) + 1)
-      if (bits < 1) bits = 1
-      if (bits > 16) bits = 16
-      crusher.bits.value = bits
-      let pan = 2 * (e.offsetX / width) - 1
-      if (pan < -1) pan = -1
-      if (pan > 1) pan = 1
-      panner.pan.value = pan
-      e.target.innerHTML = `[${note}] Bit Depth: ${bits} / Pan: ${pan.toFixed(
-        2
-      )}`
-      // e.target.innerHTML = `Bit Depth: ${bits} / Low Pass Filter: ${filter.frequency.value.toFixed(
-      //   0
-      // )} Hz / Pan: ${pan.toFixed(2)}`
-    })
-    key.addEventListener('dblclick', createRandomScale)
-    key.addEventListener('click', () => createRandomVoice(synth))
+    }
   })
-}
+  key.addEventListener('mouseout', () => {
+    const now = Tone.now()
+    i === 0 ? synth.triggerRelease(now + 3) : synth.triggerRelease(now)
+  })
+  key.addEventListener('mousemove', (e) => {
+    // if (i === 0) filter.frequency.value = Math.abs(16000 * (e.offsetY / height))
+    let bits = Math.round(15 * (e.offsetY / height) + 1)
+    if (bits < 1) bits = 1
+    if (bits > 16) bits = 16
+    crusher.bits.value = bits
+    let pan = 2 * (e.offsetX / width) - 1
+    if (pan < -1) pan = -1
+    if (pan > 1) pan = 1
+    panner.pan.value = pan
+    e.target.innerHTML = `[${note}] Bit Depth: ${bits} / Pan: ${pan.toFixed(2)}`
+    // e.target.innerHTML = `Bit Depth: ${bits} / Low Pass Filter: ${filter.frequency.value.toFixed(
+    //   0
+    // )} Hz / Pan: ${pan.toFixed(2)}`
+  })
+  key.addEventListener('dblclick', createRandomScale)
+  key.addEventListener('click', () => createRandomVoice(synth))
+})
 
 document.getElementById('button').addEventListener('click', async (e) => {
   const playBar = document.getElementById('play-bar')
   console.log(tones)
   if (playing) {
     playing = false
-    tones.forEach(async (tone, i) => {
-      console.log(tone.oscillator)
+    tones.forEach((tone, i) => {
       tone.oscillator.stop()
-      await tone.oscillator.dispose()
     })
-    tones = []
     e.target.innerHTML = 'BEGIN NOISE'
     playBar.classList.remove('playing')
   } else {
     await Tone.start()
-    startNoise()
+    tones.forEach((tone, i) => tone.oscillator.start())
     playing = true
     e.target.innerHTML = 'NOISE OFF'
     playBar.classList.add('playing')
