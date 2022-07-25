@@ -20,6 +20,7 @@ const modes = [
 let scaleKey = '' // current key
 let notes = [] // list of notes in scale
 let playing = false // enable/disable playing
+let tones = [] // list of Tones object
 
 // randomiser function
 const random = (min, max) => Math.floor(Math.random() * (max - min)) + min
